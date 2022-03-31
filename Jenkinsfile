@@ -7,7 +7,15 @@ pipeline {
 
         stage("init") {
             steps {
-				sh "chmod +x -R ${env.WORKSPACE}"
+		withCrenditals([[$class		: 'UsernamePasswordMultiBinding',
+				 crendentialsID	: 'PCF_LOGIN',
+				 usernameVariable : 'USERNAME',
+				 passwordVariable : 'PASSWORD']]) {
+			sh '/usr/local/bin/cf login -a http://api.run.pivotal.io -u $ USERNAME -p $PASSWORD'
+		}
+			
+		    
+		sh "chmod +x -R ${env.WORKSPACE}"
                 sh './run.sh'
                 echo 'building the app'
           
